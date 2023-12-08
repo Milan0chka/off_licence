@@ -9,6 +9,14 @@ public class Whiskey extends Spirit{
         this.yearsOfAging = yearsOfAging;
     }
 
+    public int getYearsOfAging() {
+        return yearsOfAging;
+    }
+
+    public void setYearsOfAging(int yearsOfAging) {
+        this.yearsOfAging = yearsOfAging;
+    }
+
     @Override
     public void infoAboutAlcoholType() {
         System.out.println("Whiskey is a rich, amber-colored spirit known for its deep,\n" +

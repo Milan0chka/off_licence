@@ -3,6 +3,7 @@ package product;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.invoke.VolatileCallSite;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,4 +62,50 @@ public class ProductService {
         return null;
     }
 
+    public static void showDetailedInformationAboutProduct(Alcohol product) {
+        String str = "";
+        if (product instanceof Wine) {
+            Wine wine = (Wine) product;
+            str += String.format("""
+                    Alcohol type : Wine
+                    Color        : %s
+                    Origin       : %s
+                    """, wine.getColor(), wine.getCountryOfOrigin());
+        } else if (product instanceof Beer) {
+            Beer beer = (Beer) product;
+            str += String.format("""
+                    Alcohol type : Beer
+                    Made of      : %s
+                    Beer type    : """, beer.getGrain());
+            str += (beer.isCraft() ? " Crafted\n" : " Regular\n");
+        } else if (product instanceof Vodka) {
+            Vodka vodka = (Vodka) product;
+            str += String.format("""
+                    Alcohol type : Spirit
+                    Spirit type  : Vodka
+                    Purity       : %.2f
+                    """, vodka.getPurity());
+        }else if (product instanceof Whiskey){
+            Whiskey whiskey = (Whiskey) product;
+            str += String.format("""
+                    Alcohol type : Spirit
+                    Spirit type  : Whiskey
+                    Age          : %d y.o
+                    """, whiskey.getYearsOfAging());
+        }
+
+        str += String.format("""
+                Product name : %s
+                Producer     : %s
+                ABV          : %.2f
+                Volume       : %.2f
+                Price        : %.2f
+                """, product.getName(), product.getProducer(), product.getAlcoholContent(),
+                product.getLitres(), product.getPrice());
+
+        System.out.println(str);
+        System.out.println("\nInformation about alcohol type: ");
+        product.infoAboutAlcoholType();
+        System.out.printf("Price per litre : %.2f", product.calculatePricePerLitre());
+    }
 }

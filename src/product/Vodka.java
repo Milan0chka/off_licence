@@ -15,6 +15,14 @@ public class Vodka extends Spirit{
                 "celebrated for its purity and versatility in cocktails");
     }
 
+    public double getPurity() {
+        return purity;
+    }
+
+    public void setPurity(double purity) {
+        this.purity = purity;
+    }
+
     @Override
     public String toString(){
         return "Vodka (" + purity + "% pure) " + super.toString();

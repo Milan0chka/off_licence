@@ -78,4 +78,12 @@ public abstract class Alcohol {
     public int getID() {
         return ID;
     }
+
+    public String getProducer() {
+        return producer;
+    }
+
+    public void setProducer(String producer) {
+        this.producer = producer;
+    }
 }

@@ -2,93 +2,64 @@ import order.*;
 import product.*;
 import user.Customer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 import static order.OrderService.*;
-import static product.ProductService.loadProducts;
-import static product.ProductService.showProducts;
-import static product.ProductService.findProduct;
-
-import static user.AuthenticationService.register;
-import static user.AuthenticationService.login;
-
-import static user.AuthenticationService.logout;
+import static product.ProductService.*;
+import static user.AuthenticationService.*;
 import static user.CustomerService.loadCustomers;
-
-//to-do 1.repeat an order 2.add product to cart after viewing
-
 
 public class Main {
 
-    public static Scanner input = new Scanner(System.in);
-
-    public static Customer user;
-    public static Cart cart = new Cart();
+    private static final Scanner input = new Scanner(System.in);
+    private static Customer user;
+    private static final Cart cart = new Cart();
 
     public static void main(String[] args) {
         loadInformation();
 
-        while (true){
+        while (true) {
+
             if (user == null)
-                switch (menu()){
-                    case 1:
-                        viewListOfProducts();
-                        break;
-                    case 2:
-                        searchProductByID();
-                        break;
-                    case 3:
-                        logIn();
-                        break;
-                    case 4:
-                        registerAccount();
-                        break;
-                    case 5:
+                switch (menu()) {
+                    case 1 -> viewListOfProducts();
+                    case 2 -> searchProductByID();
+                    case 3 -> logIn();
+                    case 4 -> registerAccount();
+                    case 5 -> {
                         System.out.println("\nSee you later!");
                         return;
+                    }
                 }
+
             else
-                switch (loggedMenu()){
-                    case 1:
-                        viewListOfProducts();
-                        break;
-                    case 2:
-                        searchProductByID();
-                        break;
-                    case 3:
-                        openCart();
-                        break;
-                    case 4:
-                        viewOrderHistory();
-                        break;
-                    case 5:
-                        logOut();
-                        break;
-                    case 6:
+                switch (loggedMenu()) {
+                    case 1 -> viewListOfProducts();
+                    case 2 -> searchProductByID();
+                    case 3 -> openCart();
+                    case 4 -> viewOrderHistory();
+                    case 5 -> logOut();
+                    case 6 -> {
                         System.out.println("\nSee you later!");
                         return;
-                    default:
+                    }
+                    default -> {
                         System.out.println("Unavailable option chosen.");
                         delay();
-                        break;
-
+                    }
                 }
-        }
 
+        }
     }
 
-    public static void loadInformation(){
+    private static void loadInformation() {
         loadProducts();
         loadCustomers();
     }
 
-    public static int loggedMenu(){
+    private static int loggedMenu() {
         System.out.println("\t\t* OFF-LICENCE SHOP *");
-        for (int i=0; i < 40; i++)
-            System.out.print("~");
+        printSeparator();
 
         System.out.println("\nMenu :");
         System.out.println("""
@@ -98,16 +69,17 @@ public class Main {
                 4. Order history
                 5. Log out
                 6. Exit""");
-        for (int i=0; i < 40; i++)
-            System.out.print("~");
-        System.out.println("\n =>");
-        return input.nextInt();
+
+        printSeparator();
+        System.out.println("=>");
+
+        return safeReadInt(input.nextLine());
     }
 
-    public static int menu(){
+    private static int menu() {
         System.out.println("\t\t* OFF-LICENCE SHOP *");
-        for (int i=0; i < 40; i++)
-            System.out.print("~");
+        printSeparator();
+
         System.out.println("\nMenu :");
         System.out.println("""
                 1. View list of products
@@ -115,39 +87,47 @@ public class Main {
                 3. Log in
                 4. Register
                 5. Exit""");
-        for (int i=0; i < 40; i++)
-            System.out.print("~");
+
+        printSeparator();
         System.out.println("\n=>");
-        return input.nextInt();
+
+        return safeReadInt(input.nextLine());
     }
 
-    public static void viewListOfProducts(){
+    private static void viewListOfProducts() {
         System.out.println("\nLIST OF AVAILABLE PRODUCTS :");
         showProducts();
         delay();
     }
 
-    public static void searchProductByID(){
+    private static void searchProductByID() {
         System.out.println("\nSEARCH PRODUCT BY ID : ");
+
         System.out.println("Enter productID => ");
-        int productID = input.nextInt();
+        int productID = safeReadInt(input.nextLine());
+
         Alcohol product = findProduct(productID);
+
         if (product == null)
-            System.out.println("No product with ID "+ productID + " was found.");
-        else{
-            System.out.println("\nProduct with ID "+ productID+" : ");
-            System.out.println(product);
-            System.out.println("\nInformation about alcohol: ");
-            product.infoAboutAlcoholType();
-            System.out.printf("Price per litre : %.2f", product.calculatePricePerLitre());
-            if(user != null){
-                System.out.println("\n\nDo you wish to add product in cart?\n" +
-                        "y/n?\n" +
-                        "=>");
-                String responce = input.next();
-                if(responce.equals("y")){
+            System.out.println("No product with ID " + productID + " was found.");
+        else {
+            System.out.println("\nProduct with ID " + productID + " : \n");
+            showDetailedInformationAboutProduct(findProduct(productID));
+
+
+            if (user != null) {
+                System.out.println("""
+
+                        Do you wish to add product in cart?
+                        y/n?
+                        =>""");
+                String response = input.next();
+
+                if (response.equals("y")) {
+
                     System.out.println("Enter a quantity => ");
-                    int qt = input.nextInt();
+                    int qt = safeReadInt(input.nextLine());
+
                     cart.addItem(product, qt);
                 }
             }
@@ -155,186 +135,246 @@ public class Main {
         delay();
     }
 
-    public static void logIn(){
+    private static void logIn() {
         System.out.println("\t\t* LOGIN * ");
+
         user = login();
-        if( user != null)
-            System.out.println("Welcome "+ user.getFullName());
+        if (user != null)
+            System.out.println("Welcome " + user.getFullName());
+
         delay();
     }
 
-    public static void registerAccount(){
+    private static void registerAccount() {
         System.out.println("\t\t* REGISTRATION * ");
+
         user = register();
-        if( user != null)
-            System.out.println("We are happy that you joined us, "+ user.getFullName()+"!");
+        if (user != null)
+            System.out.println("We are happy that you joined us, " + user.getFullName() + "!");
 
         delay();
     }
-    public static void openCart(){
-        while (true){
-            for (int i=0; i < 40; i++)
-                System.out.print("~");
-            System.out.println("\nCART : \n"+ cart);
-            switch (cartPrompt()){
-                case 1:
-                    addProductToCart();
-                    break;
-                case 2:
-                    changeQuatityInCart();
-                    break;
-                case 3:
-                    deleteProductFromCart();
-                    break;
-                case 4:
-                    clearCart();
-                    break;
-                case 5:
-                    placeOrder();
-                    break;
-                case 6:
+
+    private static void openCart() {
+        while (true) {
+            System.out.println("\nCART : \n" + cart);
+
+            switch (cartPrompt()) {
+                case 1 -> addProductToCart();
+                case 2 -> changeQuantityInCart();
+                case 3 -> deleteProductFromCart();
+                case 4 -> clearCart();
+                case 5 -> placeOrder();
+                case 6 -> {
                     return;
-                default:
-                    System.out.println("Unavailable option chosen.");
-                    break;
+                }
+                default -> System.out.println("Unavailable option chosen.");
             }
+
         }
 
     }
 
-    private static int cartPrompt(){
-        System.out.println("\nCart menu :");
+    private static int cartPrompt() {
+        printSeparator();
+
         System.out.println("""
+                CART MENU :
                 1. Add products to the cart
                 2. Change products quantity
                 3. Delete products from the cart
                 4. Clear the cart
                 5. Place an order
-                6. Exit
-                => """);
-        return input.nextInt();
+                6. Exit""");
+
+        printSeparator();
+        System.out.println("=>");
+
+        return safeReadInt(input.nextLine());
     }
 
-    private static void addProductToCart(){
+    private static void addProductToCart() {
         System.out.println("\nADDING TO CART :");
-        while (true){
+
+        while (true) {
             System.out.println("Enter ID of product (Enter 0 to finish) =>");
-            int productID = input.nextInt();
+            int productID = safeReadInt(input.nextLine());
+
             if (productID == 0)
                 return;
+
             Alcohol product = findProduct(productID);
+
             if (product == null)
-                System.out.println("No product with ID "+ productID + " was found.");
+                System.out.println("No product with ID " + productID + " was found.");
             else {
                 System.out.println("Enter quantity =>");
-                int qt = input.nextInt();
+                int qt = safeReadInt(input.nextLine());
+
                 cart.addItem(product, qt);
+
                 System.out.println();
             }
 
         }
     }
 
-    private static void clearCart(){
-        System.out.println("Are you sure you want to clear the cart?\n" +
-                "y/n?\n" +
-                "=>");
-        String responce = input.next();
-        if(responce.equals("y"))
+    private static void clearCart() {
+        System.out.println("""
+                Are you sure you want to clear the cart?
+                y/n?
+                =>""");
+
+        String response = input.next();
+        if (response.equals("y"))
             cart.clearCart();
     }
 
-    private static void deleteProductFromCart(){
+    private static void deleteProductFromCart() {
         System.out.println("\nDELETING FROM CART :");
-        while (true){
+
+        while (true) {
             System.out.println("Enter ID of product (Enter 0 to finish) =>");
-            int productID = input.nextInt();
+            int productID = safeReadInt(input.nextLine());
+
             if (productID == 0)
                 return;
+
             Alcohol product = findProduct(productID);
+
             if (product == null)
-                System.out.println("No product with ID "+ productID + " was found.");
+                System.out.println("No product with ID " + productID + " was found.");
+
             else if (cart.removeProduct(product))
-                System.out.println("Product "+ product + " was deleted from cart.");
+                System.out.println("Product " + product + " was deleted from cart.");
+
             else
-                System.out.println("Product "+ product +" is not in a cart.");
+                System.out.println("Product " + product + " is not in a cart.");
         }
     }
 
-    private static void changeQuatityInCart(){
+    private static void changeQuantityInCart() {
         System.out.println("\nCHANGING AN QUANTITY :");
-        while (true){
+
+        while (true) {
             System.out.println("Enter ID of product (Enter 0 to finish) =>");
-            int productID = input.nextInt();
+            int productID = safeReadInt(input.nextLine());
+
             if (productID == 0)
                 return;
-            Alcohol product = findProduct(productID);
-            if (product == null)
-                System.out.println("No product with ID "+ productID + " was found.");
 
-            System.out.println("Enter quantity =>");
-            int qt = input.nextInt();
-            if (cart.updateQuantity(product, qt))
-                System.out.println("Product "+ product + " quantity was changed.");
-            else
-                System.out.println("Product "+ product +" is not in a cart or you entered negative integer.");
+            Alcohol product = findProduct(productID);
+
+            if (product == null)
+                System.out.println("No product with ID " + productID + " was found.");
+            else {
+
+                System.out.println("Enter quantity =>");
+                int qt = safeReadInt(input.nextLine());
+
+                if (cart.updateQuantity(product, qt))
+                    System.out.println("Product " + product + " quantity was changed.");
+                else
+                    System.out.println("Product " + product + " is not in a cart.");
+            }
+
 
         }
     }
 
-    private static void placeOrder(){
+    private static void placeOrder() {
         System.out.println("\nPLACING OF THE ORDER :");
-        if(cart.isEmpty()){
+
+        if (cart.isEmpty()) {
             System.out.println("Cart in empty. Impossible to place an order");
+
+            delay();
             return;
         }
-        Order newOrder = createOrderFromCart(cart,user.getID());
-        if( newOrder != null)
-            System.out.println("Order has successfully placed!\n"+ newOrder);
-        else
-            System.out.println("Oops, problem occur. Order was not placed.");
+
+        Order newOrder = createOrderFromCart(cart, user.getID());
+        System.out.println("Order has successfully placed!\n" + newOrder);
+
         delay();
     }
 
-    public static void viewOrderHistory(){
+    private static void viewOrderHistory() {
         System.out.println("\nORDER HISTORY :");
+
         int ordersNumber = showCustomerOrders();
-        if (ordersNumber != 0){
-            System.out.println("\n\n Do you wish to repeat some order?\n" +
-                    "y/n?\n" +
-                    "=> ");
-            String responce = input.next();
-            if(responce.equals("y")){
+
+        if (ordersNumber != 0) {
+            System.out.println("""
+
+                    Do you wish to repeat some order?
+                    y/n?
+                    =>""");
+
+            String response = input.next();
+
+            if (response.equals("y"))
                 repeatCustomerOrder();
-            }
+
         }
         delay();
     }
 
-    private static void repeatCustomerOrder(){
+    private static void repeatCustomerOrder() {
         System.out.println("Enter ID of the order that you want to repeat =>");
-        Order newOrder = repeatOrder(input.nextInt());
-        if(newOrder == null)
-            System.out.println("Oops, something went wrong.");
+        Order newOrder = repeatOrder(
+                safeReadInt(
+                        input.nextLine()));
+
+        if (newOrder == null)
+            System.out.println("Oops, something went wrong. Order was not repeated.");
         else
-            System.out.println("Order has successfully placed!\n"+ newOrder);
+            System.out.println("Order has successfully placed!\n" + newOrder);
     }
 
-    public static void logOut(){
-        System.out.println("\nAre you sure you want to log out?\n" +
-                "y/n ?\n" +
-                "=>");
-        String responce = input.next();
-        if(responce.equals("y")){
+    private static void logOut() {
+        System.out.println("""
+
+                Are you sure you want to log out?
+                y/n ?
+                =>""");
+
+        String response = input.next();
+        if (response.equals("y")) {
             cart.clearCart();
             logout();
+
             user = null;
         }
     }
-    public static void delay(){
+
+    private static void delay() {
         System.out.println("\n\nPress Enter to continue ...");
         input.nextLine();
         input.nextLine();
     }
 
+    private static int safeReadInt(String prompt) {
+        int number;
+
+        while (true) {
+            System.out.print(prompt);
+            String inputLine = input.nextLine(); // Use nextLine to handle incorrect inputs better
+
+            try {
+                number = Integer.parseInt(inputLine);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("That's not a valid input. Please enter a number.");
+            }
+        }
+        return number;
     }
+
+    private static void printSeparator() {
+        for (int i = 0; i < 40; i++) {
+            System.out.print("~");
+        }
+        System.out.println();
+    }
+
+}

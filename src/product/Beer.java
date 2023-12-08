@@ -11,6 +11,22 @@ public class Beer extends Alcohol {
         this.isCraft = isCraft;
     }
 
+    public String getGrain() {
+        return grain;
+    }
+
+    public void setGrain(String grain) {
+        this.grain = grain;
+    }
+
+    public boolean isCraft() {
+        return isCraft;
+    }
+
+    public void setCraft(boolean craft) {
+        isCraft = craft;
+    }
+
     @Override
     public void infoAboutAlcoholType() {
         System.out.println("products.Beer is a beloved and versatile beverage, crafted through the fermentation \n" +

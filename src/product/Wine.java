@@ -11,6 +11,22 @@ public class Wine extends Alcohol {
         this.color = color;
     }
 
+    public String getCountryOfOrigin() {
+        return countryOfOrigin;
+    }
+
+    public void setCountryOfOrigin(String countryOfOrigin) {
+        this.countryOfOrigin = countryOfOrigin;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     @Override
     public void infoAboutAlcoholType() {
         System.out.println("Wine is an elegant and diverse beverage made from fermented grapes or other fruits,\n" +

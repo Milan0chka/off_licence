@@ -35,6 +35,10 @@ public class OrderService {
     }
 
     private static Order parseOrderLine(String line, int customerID) {
+        if (line == null || line.trim().isEmpty()) {
+            return null; // Skip parsing if the line is empty
+        }
+
         String[] parts = line.split(", ");
         int orderId = Integer.parseInt(parts[0].trim());
         double orderTotal = Double.parseDouble(parts[1].trim());
@@ -117,6 +121,7 @@ public class OrderService {
 
     public static void clearOrderList(){
         customerOrderList.clear();
+        setOrderNumber(1);
     }
 
 }

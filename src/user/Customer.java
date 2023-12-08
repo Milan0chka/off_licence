@@ -75,7 +75,7 @@ public class Customer {
     }
 
     public String toFileString() {
-        return  ID + ", " + fullName + ", " + email + ", " + age + ", " + password + "\n";
+        return  ID + ", " + fullName + ", " + email + ", " + age + ", " + password ;
     }
 
 }
