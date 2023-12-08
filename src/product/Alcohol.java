@@ -1,5 +1,7 @@
 package product;
 
+import static java.lang.Math.round;
+
 public abstract class Alcohol {
     protected static int barcode = 1;
     protected final int ID;
@@ -19,16 +21,27 @@ public abstract class Alcohol {
         this.alcoholContent = alcoholContent;
     }
 
+    protected Alcohol(int ID, String name, String producer, double price,
+                      double litres, double alcoholContent){
+        this.ID = ID;
+        this.name = name;
+        this.producer = producer;
+        this.price = price;
+        this.litres = litres;
+        this.alcoholContent = alcoholContent;
+    }
+
     public final double calculatePricePerLitre(){
-        return price / litres ;
+        return price/litres ;
     }
 
     public abstract void infoAboutAlcoholType();
 
     @Override
     public String toString(){
-        return String.format("%s %.2fL - %.2f$ (%.2f%%)", name, litres, price, alcoholContent);
+        return String.format("%s %.2fL(%.2f%%) - %.2f$ [%d]", name, litres, alcoholContent, price, ID);
     }
+
 
     public String getName() {
         return name;
@@ -60,5 +73,9 @@ public abstract class Alcohol {
 
     public void setAlcoholContent(double alcoholContent) {
         this.alcoholContent = alcoholContent;
+    }
+
+    public int getID() {
+        return ID;
     }
 }

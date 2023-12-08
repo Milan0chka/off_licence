@@ -1,13 +1,13 @@
 package product;
 
 public class Beer extends Alcohol {
-    private String type;
+    private String grain;
     private boolean isCraft;
 
-    public Beer(String name, String producer, double price, double litres,
-                double alcoholContent, String type, Boolean isCraft){
-        super(name, producer, price, litres, alcoholContent);
-        this.type = type;
+    public Beer(int ID, String name, String producer, double price, double litres,
+                double alcoholContent, String grain, Boolean isCraft){
+        super(ID, name, producer, price, litres, alcoholContent);
+        this.grain = grain;
         this.isCraft = isCraft;
     }
 
@@ -19,7 +19,7 @@ public class Beer extends Alcohol {
     }
     @Override
     public String toString() {
-        return (isCraft ? "Crafted" : "") + type + " beer " + super.toString();
+        return (isCraft ? "Crafted " : "") + grain + " beer " + super.toString();
     }
 
 }

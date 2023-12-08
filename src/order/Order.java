@@ -7,13 +7,24 @@ public class Order {
     private static int orderNumber = 1;
     private final int ID;
     private final int customerID;
-    private Map<Alcohol, Integer> purchasedItems;
+    private Map<Alcohol, Integer> purchasedProducts;
     private double total;
+
+    public static int getOrderNumber() {
+        return orderNumber;
+    }
 
     public Order(int customerID){
         this.ID = orderNumber++;
         this.customerID = customerID;
-        this.purchasedItems = new HashMap<>();
+        this.purchasedProducts = new HashMap<>();
+    }
+
+    public Order(int ID, int customerID, double total){
+        this.ID = orderNumber++;
+        this.customerID = customerID;
+        this.total = total;
+        this.purchasedProducts = new HashMap<>();
     }
 
     public Order(Order originalOrder){
@@ -21,23 +32,26 @@ public class Order {
         this.customerID = originalOrder.getCustomerID();
         this.total = originalOrder.getTotal();
 
-        if (originalOrder.purchasedItems != null) {
-            this.purchasedItems = new HashMap<>();
-            this.purchasedItems.putAll(originalOrder.purchasedItems);
+        if (originalOrder.purchasedProducts != null) {
+            this.purchasedProducts = new HashMap<>();
+            this.purchasedProducts.putAll(originalOrder.purchasedProducts);
         }
     }
 
+    public static void setOrderNumber(int orderNumber) {
+        Order.orderNumber = orderNumber;
+    }
 
-    public void addItem(Alcohol item, int quantity){
-        purchasedItems.put(item, quantity);
+    public void addProduct(Alcohol item, int quantity){
+        purchasedProducts.put(item, quantity);
     }
 
     @Override
     public String toString(){
         String str = "Order #"+ ID + "\nCustomer #" + customerID + "\nTotal : "+ total + "\n";
         int counter = 1;
-        for ( Alcohol item : purchasedItems.keySet())
-            str += counter++ + ". " + item + " x " + purchasedItems.get(item) + "\n";
+        for ( Alcohol item : purchasedProducts.keySet())
+            str += counter++ + ". " + item + " x " + purchasedProducts.get(item) + "\n";
         return str;
     }
 
@@ -49,14 +63,6 @@ public class Order {
         return total;
     }
 
-    public static int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public static void setOrderNumber(int orderNumber) {
-        Order.orderNumber = orderNumber;
-    }
-
     public int getID() {
         return ID;
     }
@@ -65,4 +71,11 @@ public class Order {
         return customerID;
     }
 
+    public String toFileString() {
+        return ID + "," + total;
+    }
+
+    public Map<Alcohol, Integer> getPurchasedProducts() {
+        return purchasedProducts;
+    }
 }

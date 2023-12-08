@@ -3,9 +3,9 @@ package product;
 public class Vodka extends Spirit{
     private double purity;
 
-    public Vodka(String name, String producer, double price,
+    public Vodka(int ID, String name, String producer, double price,
                  double litres, double alcoholContent, double purity) {
-        super(name, producer, price, litres, alcoholContent);
+        super(ID, name, producer, price, litres, alcoholContent);
         this.purity = purity;
     }
 

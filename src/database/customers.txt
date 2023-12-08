@@ -1,0 +1,8 @@
+1, John Doe, johndoe@example.com, 30, jd123456
+2, Jane Smith, janesmith@example.com, 25, js987654
+3, Alex Johnson, alexjohnson@example.com, 35, aj123789
+4, Maria Garcia, mariagarcia@example.com, 28, mg456123
+5, Chris Lee, chrislee@example.com, 40, cl789456
+6, Milana Zhuhaievych, milana.zhug@gmail.com, 19, ml1234
+7, Tadhg Carmody, tadhg.carmody@gmail.com, 20, ilmilana
+8, Julia Zhuhaievych, zhylto.yuli@gmail.com, 42, ilovepizza123

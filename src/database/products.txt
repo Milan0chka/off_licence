@@ -1,0 +1,12 @@
+1, Wine, Cab Sav, Villa Cream, 13.25, 0.75, 0.11, Spain, Red
+2, Wine, Sav Blan, Berefoot, 10.5, 0.5, 0.12, France, White
+3, Wine, White Zinfandel, Barefoot, 4, 0.13, 0.1, USA, Pink
+4, Whiskey, Black Barrel, Jameson, 35.1, 0.95, 0.65, 3
+5, Vodka, Hlybniy Dar, Horodyk, 10.25, 0.25, 0.4, 0.87
+6, Beer, Lager, Heineken, 3.7, 0.5, 0.6, Wheat, False
+7, Beer, Juicer, Copensberg, 5.5, 0.35, 0.5, Barley, True
+8, Beer, Golden Ale, Mountain Brew, 4.5, 0.5, 0.55, Barley, True
+9, Wine, Merlot, Sunset Vineyards, 15, 0.75, 0.14, Italy, Red
+10, Whiskey, Glenwood Reserve, Highland Spirits, 45, 0.7, 0.4, 12
+11, Vodka, Crystal Clear, Northern Distilleries, 8.5, 0.5, 0.38, 0.95
+12, Beer, Amber Bock, River Craft, 6, 0.5, 0.5, Wheat, True

@@ -1,9 +1,12 @@
+package user;
+
 public class Customer {
     private  static int customerNumber = 1;
     private final int ID;
     private String fullName;
     private String email;
     private int age;
+    private  String password;
 
     public Customer(){
         ID = customerNumber++;
@@ -11,11 +14,19 @@ public class Customer {
         email = "Unknown";
         age = 18;
     }
-    public Customer(String fullName, String email, int age){
+    public Customer(int ID, String fullName, String email, int age, String password){
+        this.ID = ID;
+        this.fullName = fullName;
+        this.email = email;
+        this.age = age;
+        this.password = password;
+    }
+    public Customer(String fullName, String email, int age, String password){
         ID = customerNumber++;
         this.fullName = fullName;
         this.email = email;
         this.age = age;
+        this.password = password;
     }
 
     public static int getCustomerNumber() {
@@ -54,4 +65,17 @@ public class Customer {
     public void setAge(int age) {
         this.age = age;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String toFileString() {
+        return  ID + ", " + fullName + ", " + email + ", " + age + ", " + password + "\n";
+    }
+
 }
