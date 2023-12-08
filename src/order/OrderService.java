@@ -1,4 +1,5 @@
 package order;
+
 import product.Alcohol;
 
 import java.io.*;
@@ -6,38 +7,59 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static order.Order.getOrderNumber;
 import static order.Order.setOrderNumber;
 import static product.ProductService.findProduct;
 
+/**
+ * The `OrderService` class manages customer orders, including loading, creating, repeating, and saving orders to files.
+ */
 public class OrderService {
 
-    private static List<Order> customerOrderList = new ArrayList<>();
+    /**
+     * A list that stores customer orders.
+     */
+    private static final List<Order> customerOrderList = new ArrayList<>();
 
-    public static void loadCustomerOrders(int customerID){
+
+    /**
+     * Loads customer orders from a file and populates the order list.
+     *
+     * @param customerID The ID of the customer for whom orders are loaded.
+     */
+    public static void loadCustomerOrders(int customerID) {
         String filename = "src/database/orders/orders_" + customerID + ".txt";
         File file = new File(filename);
 
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
+
                 while ((line = reader.readLine()) != null) {
                     Order order = parseOrderLine(line, customerID);
-                    if (order != null) {
+
+                    if (order != null)
                         customerOrderList.add(order);
-                    }
+
                 }
-                setOrderNumber(customerOrderList.size() +1);
+
+                setOrderNumber(customerOrderList.size() + 1);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    /**
+     * Parses a line of order data from a file.
+     *
+     * @param line       The line of order data.
+     * @param customerID The ID of the customer associated with the order.
+     * @return The parsed Order object, or null if parsing fails.
+     */
     private static Order parseOrderLine(String line, int customerID) {
-        if (line == null || line.trim().isEmpty()) {
-            return null; // Skip parsing if the line is empty
-        }
+        if (line == null || line.trim().isEmpty())
+            return null;
+
 
         String[] parts = line.split(", ");
         int orderId = Integer.parseInt(parts[0].trim());
@@ -49,27 +71,48 @@ public class OrderService {
         for (int i = 2; i < parts.length; i += 2) {
             int productId = Integer.parseInt(parts[i].trim());
             int quantity = Integer.parseInt(parts[i + 1].trim());
+
             order.addProduct(findProduct(productId), quantity);
         }
+
         return order;
     }
 
+    /**
+     * Creates an order from the items in a customer's cart and saves it to a file.
+     *
+     * @param cart       The customer's shopping cart.
+     * @param customerId The ID of the customer placing the order.
+     * @return The newly created Order object.
+     */
     public static Order createOrderFromCart(Cart cart, int customerId) {
         Order newOrder = new Order(customerId);
-        for (Map.Entry<Alcohol, Integer> entry : cart.getChosenItems().entrySet()) {
+
+        for (Map.Entry<Alcohol, Integer> entry : cart.getChosenProducts().entrySet())
             newOrder.addProduct(entry.getKey(), entry.getValue());
-        }
+
+
         newOrder.setTotal(cart.getTotal());
         saveOrderToFile(newOrder);
-        cart.clearCart();
         customerOrderList.add(newOrder);
+
+        cart.clearCart();
+
         return newOrder;
     }
 
-    public static Order repeatOrder(int orderID){
+
+    /**
+     * Repeats a previous order and saves it as a new order.
+     *
+     * @param orderID The ID of the order to repeat.
+     * @return The newly created Order object, or null if the original order does not exist.
+     */
+    public static Order repeatOrder(int orderID) {
         Order oldOrder = null;
+
         for (Order order : customerOrderList)
-            if (order.getID() == orderID){
+            if (order.getID() == orderID) {
                 oldOrder = order;
                 break;
             }
@@ -78,17 +121,26 @@ public class OrderService {
             return null;
 
         Order newOrder = new Order(oldOrder);
+
         saveOrderToFile(newOrder);
         customerOrderList.add(newOrder);
+
         return newOrder;
     }
 
+    /**
+     * Saves an order to a file.
+     *
+     * @param order The Order object to be saved.
+     */
     public static void saveOrderToFile(Order order) {
         String filename = "src/database/orders/orders_" + order.getCustomerID() + ".txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
+
             String orderLine = constructOrderLine(order);
             writer.write(orderLine);
+
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -96,6 +148,12 @@ public class OrderService {
         }
     }
 
+    /**
+     * Constructs a line of order data to be saved to a file.
+     *
+     * @param order The Order object to be converted to a string.
+     * @return A string containing order data.
+     */
     private static String constructOrderLine(Order order) {
         StringBuilder line = new StringBuilder();
         line.append(order.getID()).append(", ");
@@ -108,18 +166,28 @@ public class OrderService {
         return line.toString();
     }
 
-    public static int showCustomerOrders(){
-        if ( customerOrderList.size() == 0){
+
+    /**
+     * Displays the list of customer orders.
+     *
+     * @return The number of customer orders displayed.
+     */
+    public static int showCustomerOrders() {
+        if (customerOrderList.size() == 0) {
             System.out.println("No orders found.");
             return 0;
         }
-        for(int i=0; i < customerOrderList.size(); i++){
-            System.out.println((i+1)+"."+ customerOrderList.get(i));
-        }
+
+        for (int i = 0; i < customerOrderList.size(); i++)
+            System.out.println((i + 1) + "." + customerOrderList.get(i));
+
         return customerOrderList.size();
     }
 
-    public static void clearOrderList(){
+    /**
+     * Clears the list of customer orders.
+     */
+    public static void clearOrderList() {
         customerOrderList.clear();
         setOrderNumber(1);
     }
