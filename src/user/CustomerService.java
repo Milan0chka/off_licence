@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static user.Customer.setCustomerNumber;
+
 /**
  * Handles the storage and retrieval of customer data.
  * It provides functionality to load, add, and find customers,
@@ -21,7 +23,7 @@ public class CustomerService {
      */
     public static void loadCustomers() {
         readCustomersFromFile();
-        Customer.setCustomerNumber(customers.size() + 1);
+        setCustomerNumber(customers.size() + 1);
     }
 
     /**
@@ -40,6 +42,7 @@ public class CustomerService {
             }
 
         } catch (IOException e) {
+            System.out.println("Oops, problem occur. Cant reed information about customers.");
             e.printStackTrace();
         }
     }
@@ -64,6 +67,7 @@ public class CustomerService {
             writer.write(customer.toFileString());
             writer.newLine();
         } catch (IOException e) {
+            System.out.println("Oops, problem occur. Can save customer into file.");
             e.printStackTrace();
         }
     }
@@ -74,7 +78,7 @@ public class CustomerService {
      * @param email The email address of the customer to be found.
      * @return The customer if found, or null if no customer matches the email address.
      */
-    public static Customer findCustomer(String email) {
+    protected static Customer findCustomer(String email) {
         for (Customer customer : customers)
             if (email.equals(customer.getEmail()))
                 return customer;

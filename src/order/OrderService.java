@@ -23,10 +23,16 @@ public class OrderService {
 
     /**
      * Loads customer orders from a file and populates the order list.
+     * Sets the next order number based on the loaded data.
      *
      * @param customerID The ID of the customer for whom orders are loaded.
      */
     public static void loadCustomerOrders(int customerID) {
+        readCustomerOrdersFromFile(customerID);
+        setOrderNumber(customerOrderList.size() + 1);
+    }
+
+    private static void readCustomerOrdersFromFile(int customerID) {
         String filename = "src/database/orders/orders_" + customerID + ".txt";
         File file = new File(filename);
 
@@ -39,12 +45,12 @@ public class OrderService {
 
                     if (order != null)
                         customerOrderList.add(order);
-
                 }
 
-                setOrderNumber(customerOrderList.size() + 1);
             } catch (IOException e) {
+                System.out.println("Oops, problem occur during reading your order history.");
                 e.printStackTrace();
+
             }
         }
     }
@@ -86,6 +92,9 @@ public class OrderService {
      * @return The newly created Order object.
      */
     public static Order createOrderFromCart(Cart cart, int customerId) {
+        if (cart.isEmpty())
+            return null;
+
         Order newOrder = new Order(customerId);
 
         for (Map.Entry<Alcohol, Integer> entry : cart.getChosenProducts().entrySet())
@@ -101,7 +110,6 @@ public class OrderService {
         return newOrder;
     }
 
-
     /**
      * Repeats a previous order and saves it as a new order.
      *
@@ -109,13 +117,7 @@ public class OrderService {
      * @return The newly created Order object, or null if the original order does not exist.
      */
     public static Order repeatOrder(int orderID) {
-        Order oldOrder = null;
-
-        for (Order order : customerOrderList)
-            if (order.getID() == orderID) {
-                oldOrder = order;
-                break;
-            }
+        Order oldOrder = findOrder(orderID);
 
         if (oldOrder == null)
             return null;
@@ -129,11 +131,25 @@ public class OrderService {
     }
 
     /**
+     * Looks for the order with same orderID, as passed into function.
+     *
+     * @param orderID ID of a searched order
+     * @return found order, or null if it is now found
+     */
+    private static Order findOrder(int orderID) {
+        for (Order order : customerOrderList)
+            if (order.getID() == orderID)
+                return order;
+
+        return null;
+    }
+
+    /**
      * Saves an order to a file.
      *
      * @param order The Order object to be saved.
      */
-    public static void saveOrderToFile(Order order) {
+    private static void saveOrderToFile(Order order) {
         String filename = "src/database/orders/orders_" + order.getCustomerID() + ".txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
@@ -143,8 +159,8 @@ public class OrderService {
 
             writer.newLine();
         } catch (IOException e) {
+            System.out.println("The problem with saving order occurred. Please repeat order later.");
             e.printStackTrace();
-            // Handle exceptions here
         }
     }
 
@@ -173,10 +189,8 @@ public class OrderService {
      * @return The number of customer orders displayed.
      */
     public static int showCustomerOrders() {
-        if (customerOrderList.size() == 0) {
-            System.out.println("No orders found.");
+        if (customerOrderList.size() == 0)
             return 0;
-        }
 
         for (int i = 0; i < customerOrderList.size(); i++)
             System.out.println((i + 1) + "." + customerOrderList.get(i));

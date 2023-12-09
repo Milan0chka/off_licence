@@ -28,6 +28,7 @@ public class ProductService {
                 }
             }
         } catch (IOException e) {
+            System.out.println("Oops, problem occur while reading products file. Impossible to continue work.");
             e.printStackTrace();
         }
     }

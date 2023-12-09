@@ -50,7 +50,7 @@ public class Beer extends Alcohol {
     }
 
     /**
-     * {@inheritDoc}
+     * Provides information about the specific beer.
      */
     @Override
     public void infoAboutAlcoholType() {

@@ -27,7 +27,7 @@ public class Cart {
      *
      * @return A map containing selected products and their quantities.
      */
-    public Map<Alcohol, Integer> getChosenProducts() {
+    protected Map<Alcohol, Integer> getChosenProducts() {
         return chosenProducts;
     }
 
@@ -42,19 +42,6 @@ public class Cart {
             increaseQuantity(item, quantity);
         else
             chosenProducts.put(item, quantity);
-    }
-
-    /**
-     * Checks if a product is already in the cart.
-     *
-     * @param item The alcohol product to check.
-     * @return true if the product is in the cart, false otherwise.
-     */
-    private boolean isProductInCart(Alcohol item) {
-        for (Alcohol product : chosenProducts.keySet())
-            if (item == product)
-                return true;
-        return false;
     }
 
     /**
@@ -108,7 +95,7 @@ public class Cart {
      *
      * @return The total cost of the products in the cart.
      */
-    public double getTotal() {
+    protected double getTotal() {
         int total = 0;
 
         for (Alcohol item : chosenProducts.keySet())
@@ -123,10 +110,22 @@ public class Cart {
      *
      * @return true if the cart is empty, false otherwise.
      */
-    public boolean isEmpty() {
+    protected boolean isEmpty() {
         return chosenProducts.size() == 0;
     }
 
+    /**
+     * Checks if a product is already in the cart.
+     *
+     * @param item The alcohol product to check.
+     * @return true if the product is in the cart, false otherwise.
+     */
+    private boolean isProductInCart(Alcohol item) {
+        for (Alcohol product : chosenProducts.keySet())
+            if (item == product)
+                return true;
+        return false;
+    }
 
     @Override
     public String toString() {

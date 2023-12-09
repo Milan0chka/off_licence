@@ -1,6 +1,5 @@
 import order.*;
 import product.*;
-import user.Authenticatable;
 import user.AuthenticationService;
 import user.Customer;
 
@@ -8,7 +7,6 @@ import java.util.Scanner;
 
 import static order.OrderService.*;
 import static product.ProductService.*;
-import static user.AuthenticationService.*;
 import static user.CustomerService.loadCustomers;
 
 /**
@@ -355,15 +353,12 @@ public class Main {
     private static void placeOrder() {
         System.out.println("\nPLACING OF THE ORDER :");
 
-        if (cart.isEmpty()) {
-            System.out.println("Cart in empty. Impossible to place an order");
-
-            delay();
-            return;
-        }
-
         Order newOrder = createOrderFromCart(cart, user.getID());
-        System.out.println("Order has successfully placed!\n" + newOrder);
+
+        if (newOrder == null)
+            System.out.println("Cart in empty. Impossible to place an order");
+        else
+            System.out.println("Order has successfully placed!\n" + newOrder);
 
         delay();
     }
@@ -376,9 +371,10 @@ public class Main {
 
         int ordersNumber = showCustomerOrders();
 
-        if (ordersNumber != 0)
-            if (promptConfirmation("\n\nDo you wish to repeat some order?"))
-                repeatCustomerOrder();
+        if (ordersNumber == 0)
+            System.out.println("No orders found.");
+        else if (promptConfirmation("\n\nDo you wish to repeat some order?"))
+            repeatCustomerOrder();
 
         delay();
     }
@@ -388,8 +384,8 @@ public class Main {
      * Displays a message indicating whether the order repetition was successful.
      */
     private static void repeatCustomerOrder() {
-        Order newOrder = repeatOrder(
-                safeReadInt("Enter ID of the order that you want to repeat => "));
+        int orderId = safeReadInt("Enter ID of the order that you want to repeat => ");
+        Order newOrder = repeatOrder(orderId);
 
         if (newOrder == null)
             System.out.println("Oops, something went wrong. Order was not repeated.");

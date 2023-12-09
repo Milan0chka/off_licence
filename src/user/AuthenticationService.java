@@ -33,14 +33,11 @@ public class AuthenticationService implements Authenticatable {
 
         if (verifyPassword(customer, password)) {
             System.out.println("Log in successfully.");
-
             loadCustomerOrders(customer.getID());
 
             return customer;
         } else {
-
             System.out.println("You entered the wrong password. Try again. (Enter to interrupt).");
-
             return retryLogin(customer);
         }
     }
@@ -68,7 +65,7 @@ public class AuthenticationService implements Authenticatable {
      * @return true if the password matches, false otherwise.
      */
     private static boolean verifyPassword(Customer customer, String password) {
-        return Objects.equals(customer.getPassword(), password);
+        return password.equals(customer.getPassword());
     }
 
     /**
@@ -105,9 +102,9 @@ public class AuthenticationService implements Authenticatable {
     public Customer register() {
         String[] credentials = registrationPrompt();
 
-        if (credentials == null) {
+        if (credentials == null)
             return null;
-        }
+
 
         int age = Integer.parseInt(credentials[0]);
         String name = credentials[1];
@@ -118,7 +115,6 @@ public class AuthenticationService implements Authenticatable {
             return null;
 
         Customer newCustomer = new Customer(name, email, age, password);
-
         addCustomer(newCustomer);
 
         return newCustomer;
@@ -132,7 +128,6 @@ public class AuthenticationService implements Authenticatable {
     private static String[] registrationPrompt() {
         System.out.println("Enter your age: ");
         int age = safeReadInt();
-        input.nextLine(); // Consume the newline character left in the buffer
 
         if (age < 18) {
             System.out.println("Only adults can register at this website.");

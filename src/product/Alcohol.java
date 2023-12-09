@@ -116,6 +116,6 @@ public abstract class Alcohol {
 
     @Override
     public String toString() {
-        return String.format("%s %.2fL(%.2f%%) - %.2f$ [%d]", name, litres, alcoholContent, price, ID);
+        return String.format("%s %.2fL - %.2f$ [%d]", name, litres, price, ID);
     }
 }
