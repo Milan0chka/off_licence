@@ -19,7 +19,7 @@ public class ProductService {
      * Loads alcohol products from a file and populates the product list.
      */
     public static void loadProducts() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/database/products.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("database/products.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 Alcohol product = parseAlcoholLine(line);

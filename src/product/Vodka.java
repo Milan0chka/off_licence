@@ -4,7 +4,7 @@ package product;
  * The `Vodka` class represents a specific type of spirit, which is a subclass of `Spirit`.
  * It includes additional attributes and methods related to vodka.
  */
-public class Vodka extends Spirit {
+public final class Vodka extends Spirit {
     /**
      * Percentage of purity of a product
      */

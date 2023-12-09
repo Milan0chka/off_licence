@@ -64,7 +64,7 @@ public class Beer extends Alcohol {
      */
     @Override
     public String toString() {
-        return (isCraft ? "Crafted " : "") + grain + " beer " + super.toString();
+        return grain + (isCraft ? " crafted" : "") + " beer " + super.toString();
     }
 
 }

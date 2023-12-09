@@ -422,6 +422,7 @@ public class Main {
             System.out.print(prompt);
             String inputLine = input.nextLine(); // Use nextLine to handle incorrect inputs better
 
+
             try {
                 number = Integer.parseInt(inputLine);
                 break;

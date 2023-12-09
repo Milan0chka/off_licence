@@ -30,7 +30,7 @@ public class CustomerService {
      * Reads customer data from a file and adds them to the customers list.
      */
     private static void readCustomersFromFile() {
-        try (BufferedReader reader = new BufferedReader(new FileReader("src/database/customers.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("database/customers.txt"))) {
 
             String line;
 
@@ -63,7 +63,7 @@ public class CustomerService {
      * @param customer The customer whose data is to be written to the file.
      */
     private static void writeCustomerToFile(Customer customer) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("src/database/customers.txt", true))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("database/customers.txt", true))) {
             writer.write(customer.toFileString());
             writer.newLine();
         } catch (IOException e) {

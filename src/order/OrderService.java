@@ -33,7 +33,7 @@ public class OrderService {
     }
 
     private static void readCustomerOrdersFromFile(int customerID) {
-        String filename = "src/database/orders/orders_" + customerID + ".txt";
+        String filename = "database/orders/orders_" + customerID + ".txt";
         File file = new File(filename);
 
         if (file.exists()) {
@@ -150,7 +150,7 @@ public class OrderService {
      * @param order The Order object to be saved.
      */
     private static void saveOrderToFile(Order order) {
-        String filename = "src/database/orders/orders_" + order.getCustomerID() + ".txt";
+        String filename = "database/orders/orders_" + order.getCustomerID() + ".txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
 
