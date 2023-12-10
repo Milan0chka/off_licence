@@ -12,15 +12,7 @@ public class Cart {
     /**
      * A map that stores the selected products and their quantities in the cart.
      */
-    private final Map<Alcohol, Integer> chosenProducts;
-
-    /**
-     * Creates an empty shopping cart.
-     */
-    public Cart() {
-        this.chosenProducts = new HashMap<>();
-    }
-
+    private static final Map<Alcohol, Integer> chosenProducts = new HashMap<>();
 
     /**
      * Gets the map of selected products and their quantities in the cart.

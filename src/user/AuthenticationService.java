@@ -1,17 +1,19 @@
 package user;
 
-import java.util.Objects;
-import java.util.Scanner;
+import order.OrderService;
 
-import static order.OrderService.*;
-import static user.CustomerService.*;
+import java.util.Scanner;
 
 /**
  * Handles authentication processes including login, registration, and logout for the application.
  */
-public class AuthenticationService implements Authenticatable {
+public class AuthenticationService {
 
     private static final Scanner input = new Scanner(System.in);
+
+    private static final OrderService orderService = new OrderService();
+
+    private static final CustomerService customerService = new CustomerService();
 
     /**
      * Performs the login operation for a customer.
@@ -24,7 +26,7 @@ public class AuthenticationService implements Authenticatable {
         String email = credentials[0];
         String password = credentials[1];
 
-        Customer customer = findCustomer(email);
+        Customer customer = customerService.findCustomer(email);
 
         if (customer == null) {
             System.out.println("No customer with this email is found");
@@ -33,7 +35,8 @@ public class AuthenticationService implements Authenticatable {
 
         if (verifyPassword(customer, password)) {
             System.out.println("Log in successfully.");
-            loadCustomerOrders(customer.getID());
+
+            orderService.loadCustomerOrders(customer.getID());
 
             return customer;
         } else {
@@ -47,7 +50,7 @@ public class AuthenticationService implements Authenticatable {
      *
      * @return An array of Strings containing the email and password.
      */
-    private static String[] promptForEmailAndPassword() {
+    private String[] promptForEmailAndPassword() {
         System.out.println("Email: ");
         String email = input.nextLine();
 
@@ -64,7 +67,7 @@ public class AuthenticationService implements Authenticatable {
      * @param password The password to verify.
      * @return true if the password matches, false otherwise.
      */
-    private static boolean verifyPassword(Customer customer, String password) {
+    private boolean verifyPassword(Customer customer, String password) {
         return password.equals(customer.getPassword());
     }
 
@@ -74,7 +77,7 @@ public class AuthenticationService implements Authenticatable {
      * @param customer The customer attempting to log in.
      * @return The Customer object if login is successful, null otherwise.
      */
-    private static Customer retryLogin(Customer customer) {
+    private Customer retryLogin(Customer customer) {
         String password;
 
         do {
@@ -82,7 +85,8 @@ public class AuthenticationService implements Authenticatable {
             password = input.nextLine();
 
             if (password.equals(customer.getPassword())) {
-                loadCustomerOrders(customer.getID());
+
+                orderService.loadCustomerOrders(customer.getID());
                 return customer;
             }
 
@@ -115,7 +119,7 @@ public class AuthenticationService implements Authenticatable {
             return null;
 
         Customer newCustomer = new Customer(name, email, age, password);
-        addCustomer(newCustomer);
+        customerService.addCustomer(newCustomer);
 
         return newCustomer;
     }
@@ -125,7 +129,7 @@ public class AuthenticationService implements Authenticatable {
      *
      * @return An array of Strings containing the registration details.
      */
-    private static String[] registrationPrompt() {
+    private String[] registrationPrompt() {
         System.out.println("Enter your age: ");
         int age = safeReadInt();
 
@@ -151,7 +155,7 @@ public class AuthenticationService implements Authenticatable {
      *
      * @return The integer entered by the user.
      */
-    private static int safeReadInt() {
+    private int safeReadInt() {
         int number;
 
         while (true) {
@@ -172,8 +176,8 @@ public class AuthenticationService implements Authenticatable {
      * @param email The email to check.
      * @return true if the email is already in use, false otherwise.
      */
-    private static boolean isEmailUsed(String email) {
-        if (findCustomer(email) != null) {
+    private boolean isEmailUsed(String email) {
+        if (customerService.findCustomer(email) != null) {
             System.out.println("This email is already registered.");
             return true;
         }
@@ -184,6 +188,6 @@ public class AuthenticationService implements Authenticatable {
      * Handles the logout operation by clearing the order list.
      */
     public void logout() {
-        clearOrderList();
+        orderService.clearOrderList();
     }
 }

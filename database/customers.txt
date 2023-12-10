@@ -8,3 +8,4 @@
 8, Julia Zhuhaievych, zhylto.yuli@gmail.com, 42, ilovepizza123
 9, Cerys Cash, ceryss@gmail.com, 27, 12345
 10, Jenny MacBook, jenny.cool@gmail.com, 26, 909060
+11, Oishin Swift, swift.o@gmail.com, 90, IamOLD

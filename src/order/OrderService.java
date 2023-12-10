@@ -1,6 +1,7 @@
 package order;
 
 import product.Alcohol;
+import product.ProductService;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import static order.Order.setOrderNumber;
-import static product.ProductService.findProduct;
 
 /**
  * The `OrderService` class manages customer orders, including loading, creating, repeating, and saving orders to files.
@@ -20,19 +20,18 @@ public class OrderService {
      */
     private static final List<Order> customerOrderList = new ArrayList<>();
 
-
     /**
      * Loads customer orders from a file and populates the order list.
      * Sets the next order number based on the loaded data.
      *
      * @param customerID The ID of the customer for whom orders are loaded.
      */
-    public static void loadCustomerOrders(int customerID) {
+    public void loadCustomerOrders(int customerID) {
         readCustomerOrdersFromFile(customerID);
         setOrderNumber(customerOrderList.size() + 1);
     }
 
-    private static void readCustomerOrdersFromFile(int customerID) {
+    private void readCustomerOrdersFromFile(int customerID) {
         String filename = "database/orders/orders_" + customerID + ".txt";
         File file = new File(filename);
 
@@ -62,7 +61,7 @@ public class OrderService {
      * @param customerID The ID of the customer associated with the order.
      * @return The parsed Order object, or null if parsing fails.
      */
-    private static Order parseOrderLine(String line, int customerID) {
+    private Order parseOrderLine(String line, int customerID) {
         if (line == null || line.trim().isEmpty())
             return null;
 
@@ -78,7 +77,8 @@ public class OrderService {
             int productId = Integer.parseInt(parts[i].trim());
             int quantity = Integer.parseInt(parts[i + 1].trim());
 
-            order.addProduct(findProduct(productId), quantity);
+            ProductService productService = new ProductService();
+            order.addProduct(productService.findProduct(productId), quantity);
         }
 
         return order;
@@ -91,7 +91,7 @@ public class OrderService {
      * @param customerId The ID of the customer placing the order.
      * @return The newly created Order object.
      */
-    public static Order createOrderFromCart(Cart cart, int customerId) {
+    public Order createOrderFromCart(Cart cart, int customerId) {
         if (cart.isEmpty())
             return null;
 
@@ -116,7 +116,7 @@ public class OrderService {
      * @param orderID The ID of the order to repeat.
      * @return The newly created Order object, or null if the original order does not exist.
      */
-    public static Order repeatOrder(int orderID) {
+    public Order repeatOrder(int orderID) {
         Order oldOrder = findOrder(orderID);
 
         if (oldOrder == null)
@@ -136,7 +136,7 @@ public class OrderService {
      * @param orderID ID of a searched order
      * @return found order, or null if it is now found
      */
-    private static Order findOrder(int orderID) {
+    private Order findOrder(int orderID) {
         for (Order order : customerOrderList)
             if (order.getID() == orderID)
                 return order;
@@ -149,7 +149,7 @@ public class OrderService {
      *
      * @param order The Order object to be saved.
      */
-    private static void saveOrderToFile(Order order) {
+    private void saveOrderToFile(Order order) {
         String filename = "database/orders/orders_" + order.getCustomerID() + ".txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
@@ -170,7 +170,7 @@ public class OrderService {
      * @param order The Order object to be converted to a string.
      * @return A string containing order data.
      */
-    private static String constructOrderLine(Order order) {
+    private String constructOrderLine(Order order) {
         StringBuilder line = new StringBuilder();
         line.append(order.getID()).append(", ");
         line.append(order.getTotal());
@@ -188,7 +188,7 @@ public class OrderService {
      *
      * @return The number of customer orders displayed.
      */
-    public static int showCustomerOrders() {
+    public int showCustomerOrders() {
         if (customerOrderList.size() == 0)
             return 0;
 
@@ -201,7 +201,7 @@ public class OrderService {
     /**
      * Clears the list of customer orders.
      */
-    public static void clearOrderList() {
+    public void clearOrderList() {
         customerOrderList.clear();
         setOrderNumber(1);
     }

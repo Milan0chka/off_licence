@@ -13,12 +13,12 @@ public class ProductService {
     /**
      * A list that stores alcohol products.
      */
-    public static List<Alcohol> productList = new ArrayList<>();
+    private static final List<Alcohol> productList = new ArrayList<>();
 
     /**
      * Loads alcohol products from a file and populates the product list.
      */
-    public static void loadProducts() {
+    public void loadProducts() {
         try (BufferedReader reader = new BufferedReader(new FileReader("database/products.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -39,7 +39,7 @@ public class ProductService {
      * @param line The line of alcohol product data.
      * @return The parsed Alcohol object, or null if parsing fails.
      */
-    private static Alcohol parseAlcoholLine(String line) {
+    private Alcohol parseAlcoholLine(String line) {
         String[] parts = line.split(", ");
         String type = parts[1];
 
@@ -66,7 +66,7 @@ public class ProductService {
      * @param productID The ID of the product to find.
      * @return The found Alcohol object, or null if not found.
      */
-    public static Alcohol findProduct(int productID) {
+    public Alcohol findProduct(int productID) {
         for (Alcohol product : productList)
             if (product.ID == productID)
                 return product;
@@ -77,7 +77,7 @@ public class ProductService {
     /**
      * Displays a list of alcohol products.
      */
-    public static void showProducts() {
+    public void showProducts() {
         for (int i = 0; i < productList.size(); i++)
             System.out.println((i + 1) + ". " + productList.get(i));
 
@@ -88,7 +88,7 @@ public class ProductService {
      *
      * @param product The Alcohol object for which to display information.
      */
-    public static void showDetailedInformationAboutProduct(Alcohol product) {
+    public void showDetailedInformationAboutProduct(Alcohol product) {
         String str = "";
 
         if (product instanceof Wine wine) {
@@ -141,6 +141,6 @@ public class ProductService {
         if (product instanceof Spirit)
             ((Spirit) product).notifyCustomer();
 
-        System.out.printf("Price per litre : %.2f", product.calculatePricePerLitre());
+        System.out.printf("Price per litre : %.2f\n", product.calculatePricePerLitre());
     }
 }

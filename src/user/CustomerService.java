@@ -21,7 +21,7 @@ public class CustomerService {
      * Loads customers from a file into the application.
      * Sets the next customer number based on the loaded data.
      */
-    public static void loadCustomers() {
+    public void loadCustomers() {
         readCustomersFromFile();
         setCustomerNumber(customers.size() + 1);
     }
@@ -29,7 +29,7 @@ public class CustomerService {
     /**
      * Reads customer data from a file and adds them to the customers list.
      */
-    private static void readCustomersFromFile() {
+    private void readCustomersFromFile() {
         try (BufferedReader reader = new BufferedReader(new FileReader("database/customers.txt"))) {
 
             String line;
@@ -52,7 +52,7 @@ public class CustomerService {
      *
      * @param customer The customer to be added.
      */
-    public static void addCustomer(Customer customer) {
+    protected void addCustomer(Customer customer) {
         customers.add(customer);
         writeCustomerToFile(customer);
     }
@@ -62,7 +62,7 @@ public class CustomerService {
      *
      * @param customer The customer whose data is to be written to the file.
      */
-    private static void writeCustomerToFile(Customer customer) {
+    private void writeCustomerToFile(Customer customer) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("database/customers.txt", true))) {
             writer.write(customer.toFileString());
             writer.newLine();
@@ -78,7 +78,7 @@ public class CustomerService {
      * @param email The email address of the customer to be found.
      * @return The customer if found, or null if no customer matches the email address.
      */
-    protected static Customer findCustomer(String email) {
+    protected Customer findCustomer(String email) {
         for (Customer customer : customers)
             if (email.equals(customer.getEmail()))
                 return customer;

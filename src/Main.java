@@ -1,13 +1,8 @@
 import order.*;
 import product.*;
-import user.AuthenticationService;
-import user.Customer;
 
 import java.util.Scanner;
 
-import static order.OrderService.*;
-import static product.ProductService.*;
-import static user.CustomerService.loadCustomers;
 
 /**
  * The Main class serves as the entry point for the off-licence shop application.
@@ -23,11 +18,7 @@ public class Main {
     /**
      * The currently logged-in customer, or null if no user is logged in.
      */
-    private static Customer user;
-    /**
-     * The shopping cart associated with the current user session.
-     */
-    private static final Cart cart = new Cart();
+    private static final Shop shop = new Shop();
 
     /**
      * The main method that starts the execution of the application.
@@ -39,20 +30,7 @@ public class Main {
         loadInformation();
 
         while (true) {
-
-            if (user == null)
-                switch (menu()) {
-                    case 1 -> viewListOfProducts();
-                    case 2 -> searchProductByID();
-                    case 3 -> logIn();
-                    case 4 -> registerAccount();
-                    case 5 -> {
-                        System.out.println("\nSee you later!");
-                        return;
-                    }
-                }
-
-            else
+            if (shop.isLoggedIn())
                 switch (loggedMenu()) {
                     case 1 -> viewListOfProducts();
                     case 2 -> searchProductByID();
@@ -68,7 +46,21 @@ public class Main {
                         delay();
                     }
                 }
-
+            else
+                switch (menu()) {
+                    case 1 -> viewListOfProducts();
+                    case 2 -> searchProductByID();
+                    case 3 -> logIn();
+                    case 4 -> registerAccount();
+                    case 5 -> {
+                        System.out.println("\nSee you later!");
+                        return;
+                    }
+                    default -> {
+                        System.out.println("Unavailable option chosen.");
+                        delay();
+                    }
+                }
         }
     }
 
@@ -77,8 +69,7 @@ public class Main {
      * This involves loading products and customers.
      */
     private static void loadInformation() {
-        loadProducts();
-        loadCustomers();
+        shop.loadInformation();
     }
 
     /**
@@ -131,7 +122,7 @@ public class Main {
      */
     private static void viewListOfProducts() {
         System.out.println("\nLIST OF AVAILABLE PRODUCTS :");
-        showProducts();
+        shop.showProducts();
         delay();
     }
 
@@ -141,31 +132,22 @@ public class Main {
     private static void searchProductByID() {
         System.out.println("\nSEARCH PRODUCT BY ID : ");
 
-
         int productID = safeReadInt("Enter productID => ");
 
-        Alcohol product = findProduct(productID);
+        Alcohol product = shop.findProduct(productID);
 
         if (product == null)
             System.out.println("No product with ID " + productID + " was found.");
         else {
             System.out.println("\nProduct with ID " + productID + " : \n");
-            showDetailedInformationAboutProduct(findProduct(productID));
+            shop.showDetailedInfoAboutProducts(product);
 
-
-            if (user != null) {
-                System.out.println("""
-
-                        Do you wish to add product in cart?
-                        y/n?
-                        =>""");
-
-                String response = input.next();
-                if (response.equals("y")) {
+            if (shop.isLoggedIn())
+                if (promptConfirmation("Do you wish to add product in cart?")) {
                     int qt = safeReadInt("Enter a quantity => ");
-                    cart.addProduct(product, qt);
+                    shop.addProductToCart(product, qt);
                 }
-            }
+
         }
         delay();
     }
@@ -177,11 +159,10 @@ public class Main {
     private static void logIn() {
         System.out.println("\t\t* LOGIN * ");
 
-        AuthenticationService login = new AuthenticationService();
-        user = login.login();
+        shop.logIn();
 
-        if (user != null)
-            System.out.println("Welcome " + user.getFullName());
+        if (shop.isLoggedIn())
+            System.out.println("Welcome back!");
 
         delay();
     }
@@ -193,11 +174,10 @@ public class Main {
     private static void registerAccount() {
         System.out.println("\t\t* REGISTRATION * ");
 
-        AuthenticationService registration = new AuthenticationService();
-        user = registration.register();
+        shop.register();
 
-        if (user != null)
-            System.out.println("We are happy that you joined us, " + user.getFullName() + "!");
+        if (shop.isLoggedIn())
+            System.out.println("We are happy that you joined us!");
 
         delay();
     }
@@ -209,7 +189,7 @@ public class Main {
      */
     private static void openCart() {
         while (true) {
-            System.out.println("\nCART : \n" + cart);
+            System.out.println("\nCART : \n" + shop.getCart());
 
             switch (cartPrompt()) {
                 case 1 -> addProductToCart();
@@ -241,7 +221,7 @@ public class Main {
                 3. Delete products from the cart
                 4. Clear the cart
                 5. Place an order
-                6. Exit""");
+                6. Return to main page""");
 
         printSeparator();
 
@@ -261,13 +241,13 @@ public class Main {
             if (productID == 0)
                 return;
 
-            Alcohol product = findProduct(productID);
+            Alcohol product = shop.findProduct(productID);
 
             if (product == null)
                 System.out.println("No product with ID " + productID + " was found.");
             else {
                 int qt = safeReadInt("Enter quantity =>");
-                cart.addProduct(product, qt);
+                shop.addProductToCart(product, qt);
 
                 System.out.println();
             }
@@ -279,14 +259,8 @@ public class Main {
      * Clears all items from the user's cart after confirming with the user.
      */
     private static void clearCart() {
-        System.out.println("""
-                Are you sure you want to clear the cart?
-                y/n?
-                =>""");
-
-        String response = input.next();
-        if (response.equals("y"))
-            cart.clearCart();
+        if (promptConfirmation("Are you sure you want to clear the cart?"))
+            shop.clearCart();
     }
 
     /**
@@ -302,14 +276,13 @@ public class Main {
             if (productID == 0)
                 return;
 
-            Alcohol product = findProduct(productID);
+            Alcohol product = shop.findProduct(productID);
 
             if (product == null)
                 System.out.println("No product with ID " + productID + " was found.");
 
-            else if (cart.removeProduct(product))
+            else if (shop.removeProductFromCart(product))
                 System.out.println("Product " + product + " was deleted from cart.");
-
             else
                 System.out.println("Product " + product + " is not in a cart.");
         }
@@ -328,15 +301,14 @@ public class Main {
             if (productID == 0)
                 return;
 
-            Alcohol product = findProduct(productID);
+            Alcohol product = shop.findProduct(productID);
 
             if (product == null)
                 System.out.println("No product with ID " + productID + " was found.\n");
             else {
-
                 int qt = safeReadInt("Enter quantity =>");
 
-                if (cart.updateQuantity(product, qt))
+                if (shop.updateQuantityInCart(product, qt))
                     System.out.println("Product " + product + " quantity was changed.\n");
                 else
                     System.out.println("Product " + product + " is not in a cart.\n");
@@ -353,7 +325,7 @@ public class Main {
     private static void placeOrder() {
         System.out.println("\nPLACING OF THE ORDER :");
 
-        Order newOrder = createOrderFromCart(cart, user.getID());
+        Order newOrder = shop.createOrder();
 
         if (newOrder == null)
             System.out.println("Cart in empty. Impossible to place an order");
@@ -369,10 +341,9 @@ public class Main {
     private static void viewOrderHistory() {
         System.out.println("\nORDER HISTORY :");
 
-        int ordersNumber = showCustomerOrders();
-
-        if (ordersNumber == 0)
+        if (shop.showCustomerOrders() == 0)
             System.out.println("No orders found.");
+
         else if (promptConfirmation("\n\nDo you wish to repeat some order?"))
             repeatCustomerOrder();
 
@@ -385,7 +356,7 @@ public class Main {
      */
     private static void repeatCustomerOrder() {
         int orderId = safeReadInt("Enter ID of the order that you want to repeat => ");
-        Order newOrder = repeatOrder(orderId);
+        Order newOrder = shop.repeatOrder(orderId);
 
         if (newOrder == null)
             System.out.println("Oops, something went wrong. Order was not repeated.");
@@ -398,14 +369,8 @@ public class Main {
      * Clears the user's cart upon successful logout.
      */
     private static void logOut() {
-        if (promptConfirmation("\n\nAre you sure you want to log out?")) {
-            cart.clearCart();
-
-            AuthenticationService logout = new AuthenticationService();
-            logout.logout();
-
-            user = null;
-        }
+        if (promptConfirmation("\n\nAre you sure you want to log out?"))
+            shop.logOut();
     }
 
     /**
@@ -421,7 +386,6 @@ public class Main {
         while (true) {
             System.out.print(prompt);
             String inputLine = input.nextLine(); // Use nextLine to handle incorrect inputs better
-
 
             try {
                 number = Integer.parseInt(inputLine);
@@ -442,6 +406,7 @@ public class Main {
     private static boolean promptConfirmation(String promptMessage) {
         System.out.print("\n" + promptMessage + "\ny/n ? => ");
         String response = input.nextLine().trim().toLowerCase();
+        System.out.println();
         return response.equals("y");
     }
 
