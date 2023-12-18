@@ -13,6 +13,26 @@ public class Cart {
      * A map that stores the selected products and their quantities in the cart.
      */
     private static final Map<Alcohol, Integer> chosenProducts = new HashMap<>();
+    private static Cart instance;
+
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     */
+    private Cart() {
+    }
+
+    /**
+     * Gets the singleton instance of the Cart class. If an instance does not exist,
+     * it creates one. Subsequent calls return the existing instance.
+     *
+     * @return The Cart instance.
+     */
+    public static Cart getInstance() {
+        if (instance == null) {
+            instance = new Cart();
+        }
+        return instance;
+    }
 
     /**
      * Gets the map of selected products and their quantities in the cart.

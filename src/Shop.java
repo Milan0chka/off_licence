@@ -6,7 +6,9 @@ import user.AuthenticationService;
 import user.Customer;
 import user.CustomerService;
 
-
+/**
+ * The Shop class represents an off-licence shop where customers can browse and purchase products.
+ */
 public class Shop implements ShopInterface {
     private final CustomerService customerService;
     private final ProductService productService;
@@ -15,13 +17,18 @@ public class Shop implements ShopInterface {
     private final Cart cart;
     private Customer customer;
 
+    /**
+     * Constructs a new Shop instance. Initializes various services and data structures
+     * required for managing customer interactions, authentication, product catalog,
+     * shopping carts, and order history. Initially, there is no logged-in customer.
+     */
     public Shop() {
         this.customer = null;
-        this.cart = new Cart();
-        this.customerService = new CustomerService();
-        this.authenticationService = new AuthenticationService();
-        this.productService = new ProductService();
-        this.orderService = new OrderService();
+        this.cart = Cart.getInstance();
+        this.customerService = CustomerService.getInstance();
+        this.authenticationService = AuthenticationService.getInstance();
+        this.productService = ProductService.getInstance();
+        this.orderService = OrderService.getInstance();
     }
 
 
@@ -61,7 +68,17 @@ public class Shop implements ShopInterface {
      * @return The found product or null if not found.
      */
     public Alcohol findProduct(int productID) {
-        return productService.findProduct(productID);
+        return ProductService.findProduct(productID);
+    }
+
+    /**
+     * Find a product by its name.
+     *
+     * @param productName The name of the product to find.
+     * @return The found product or null if not found.
+     */
+    public Alcohol findProduct(String productName) {
+        return ProductService.findProduct(productName);
     }
 
     /**
@@ -78,6 +95,8 @@ public class Shop implements ShopInterface {
      */
     public void logIn() {
         this.customer = authenticationService.login();
+        if (customer != null)
+            orderService.loadCustomerOrders(customer.getID());
     }
 
     /**
@@ -157,9 +176,10 @@ public class Shop implements ShopInterface {
      * Log out the current customer.
      */
     public void logOut() {
-        clearCart();
-        authenticationService.logout();
+        cart.clearCart();
+        orderService.clearOrderList();
         customer = null;
+        authenticationService.logout();
     }
 
 }

@@ -16,6 +16,26 @@ public class CustomerService {
      * List of registered customers.
      */
     private static final List<Customer> customers = new ArrayList<>();
+    private static CustomerService instance;
+
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     */
+    private CustomerService() {
+    }
+
+    /**
+     * Gets the singleton instance of the CustomerService class. If an instance
+     * does not exist, it creates one. Subsequent calls return the existing instance.
+     *
+     * @return The CustomerService instance.
+     */
+    public static CustomerService getInstance() {
+        if (instance == null) {
+            instance = new CustomerService();
+        }
+        return instance;
+    }
 
     /**
      * Loads customers from a file into the application.
@@ -52,7 +72,7 @@ public class CustomerService {
      *
      * @param customer The customer to be added.
      */
-    protected void addCustomer(Customer customer) {
+    protected static void addCustomer(Customer customer) {
         customers.add(customer);
         writeCustomerToFile(customer);
     }
@@ -62,7 +82,7 @@ public class CustomerService {
      *
      * @param customer The customer whose data is to be written to the file.
      */
-    private void writeCustomerToFile(Customer customer) {
+    private static void writeCustomerToFile(Customer customer) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("database/customers.txt", true))) {
             writer.write(customer.toFileString());
             writer.newLine();
@@ -78,7 +98,7 @@ public class CustomerService {
      * @param email The email address of the customer to be found.
      * @return The customer if found, or null if no customer matches the email address.
      */
-    protected Customer findCustomer(String email) {
+    protected static Customer findCustomer(String email) {
         for (Customer customer : customers)
             if (email.equals(customer.getEmail()))
                 return customer;

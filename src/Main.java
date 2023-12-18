@@ -33,7 +33,7 @@ public class Main {
             if (shop.isLoggedIn())
                 switch (loggedMenu()) {
                     case 1 -> viewListOfProducts();
-                    case 2 -> searchProductByID();
+                    case 2 -> searchProduct();
                     case 3 -> openCart();
                     case 4 -> viewOrderHistory();
                     case 5 -> logOut();
@@ -49,7 +49,7 @@ public class Main {
             else
                 switch (menu()) {
                     case 1 -> viewListOfProducts();
-                    case 2 -> searchProductByID();
+                    case 2 -> searchProduct();
                     case 3 -> logIn();
                     case 4 -> registerAccount();
                     case 5 -> {
@@ -83,7 +83,7 @@ public class Main {
         System.out.println("\nMENU :");
         System.out.println("""
                 1. View list of products
-                2. Search for a product by ID
+                2. Search for a product
                 3. Open cart
                 4. Order history
                 5. Log out
@@ -107,7 +107,7 @@ public class Main {
         System.out.println("\nMenu :");
         System.out.println("""
                 1. View list of products
-                2. Search for a product by ID
+                2. Search for a product
                 3. Log in
                 4. Register
                 5. Exit""");
@@ -126,13 +126,22 @@ public class Main {
         delay();
     }
 
+    private static void searchProduct() {
+        System.out.println("\nSEARCH FOR A PRODUCT :");
+
+        if (promptConfirmation("Enter 'y' to search by ID\nEnter other symbol to search by name"))
+            searchProductByID();
+        else
+            searchProductByName();
+    }
+
     /**
      * Searches for a product by its ID and allows the user to add it to their cart.
      */
     private static void searchProductByID() {
         System.out.println("\nSEARCH PRODUCT BY ID : ");
 
-        int productID = safeReadInt("Enter productID => ");
+        int productID = safeReadInt("Enter product ID => ");
 
         Alcohol product = shop.findProduct(productID);
 
@@ -140,6 +149,33 @@ public class Main {
             System.out.println("No product with ID " + productID + " was found.");
         else {
             System.out.println("\nProduct with ID " + productID + " : \n");
+            shop.showDetailedInfoAboutProducts(product);
+
+            if (shop.isLoggedIn())
+                if (promptConfirmation("Do you wish to add product in cart?")) {
+                    int qt = safeReadInt("Enter a quantity => ");
+                    shop.addProductToCart(product, qt);
+                }
+
+        }
+        delay();
+    }
+
+    /**
+     * Searches for a product by its name and allows the user to add it to their cart.
+     */
+    private static void searchProductByName() {
+        System.out.println("\nSEARCH PRODUCT BY NAME : ");
+
+        System.out.print("Enter product name => ");
+        String productName = input.nextLine();
+
+        Alcohol product = shop.findProduct(productName);
+
+        if (product == null)
+            System.out.println("No product with name " + productName + " was found.");
+        else {
+            System.out.println("\nProduct with a name \"" + productName + "\" found : \n");
             shop.showDetailedInfoAboutProducts(product);
 
             if (shop.isLoggedIn())
@@ -279,12 +315,12 @@ public class Main {
             Alcohol product = shop.findProduct(productID);
 
             if (product == null)
-                System.out.println("No product with ID " + productID + " was found.");
+                System.out.println("No product with ID " + productID + " was found.\n");
 
             else if (shop.removeProductFromCart(product))
-                System.out.println("Product " + product + " was deleted from cart.");
+                System.out.println("Product " + product + " was deleted from cart.\n");
             else
-                System.out.println("Product " + product + " is not in a cart.");
+                System.out.println("Product " + product + " is not in a cart.\n");
         }
     }
 

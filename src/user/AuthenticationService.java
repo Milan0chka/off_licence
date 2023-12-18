@@ -1,19 +1,32 @@
 package user;
 
-import order.OrderService;
-
 import java.util.Scanner;
 
 /**
  * Handles authentication processes including login, registration, and logout for the application.
  */
 public class AuthenticationService {
-
     private static final Scanner input = new Scanner(System.in);
+    private static AuthenticationService instance;
 
-    private static final OrderService orderService = new OrderService();
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     */
+    private AuthenticationService() {
+    }
 
-    private static final CustomerService customerService = new CustomerService();
+    /**
+     * Gets the singleton instance of the AuthenticationService class. If an instance
+     * does not exist, it creates one. Subsequent calls return the existing instance.
+     *
+     * @return The AuthenticationService instance.
+     */
+    public static AuthenticationService getInstance() {
+        if (instance == null) {
+            instance = new AuthenticationService();
+        }
+        return instance;
+    }
 
     /**
      * Performs the login operation for a customer.
@@ -21,26 +34,25 @@ public class AuthenticationService {
      * @return The logged-in Customer object or null if the login fails.
      */
     public Customer login() {
-
+        // Prompt for email and password
         String[] credentials = promptForEmailAndPassword();
         String email = credentials[0];
         String password = credentials[1];
 
-        Customer customer = customerService.findCustomer(email);
+        // Find the customer by email
+        Customer customer = CustomerService.findCustomer(email);
 
         if (customer == null) {
             System.out.println("No customer with this email is found");
             return null;
         }
 
+        // Verify the entered password
         if (verifyPassword(customer, password)) {
             System.out.println("Log in successfully.");
-
-            orderService.loadCustomerOrders(customer.getID());
-
             return customer;
         } else {
-            System.out.println("You entered the wrong password. Try again. (Enter to interrupt).");
+            // Retry login in case of incorrect password
             return retryLogin(customer);
         }
     }
@@ -81,17 +93,12 @@ public class AuthenticationService {
         String password;
 
         do {
+            System.out.println("You entered the wrong password. Try again. (Enter empty line to interrupt).");
             System.out.println("Password: ");
             password = input.nextLine();
 
-            if (password.equals(customer.getPassword())) {
-
-                orderService.loadCustomerOrders(customer.getID());
+            if (password.equals(customer.getPassword()))
                 return customer;
-            }
-
-            System.out.println("You entered the wrong password. Try again. (Enter to interrupt).");
-            input.nextLine();
 
         } while (!password.equals(""));
 
@@ -104,22 +111,25 @@ public class AuthenticationService {
      * @return The newly registered Customer object or null if registration fails.
      */
     public Customer register() {
+        // Prompt the user for registration details
         String[] credentials = registrationPrompt();
 
         if (credentials == null)
             return null;
 
-
+        // Extract registration details
         int age = Integer.parseInt(credentials[0]);
         String name = credentials[1];
         String email = credentials[2];
         String password = credentials[3];
 
+        // Check if the email is already in use
         if (isEmailUsed(email))
             return null;
 
+        // Create a new Customer and add it to the customer list
         Customer newCustomer = new Customer(name, email, age, password);
-        customerService.addCustomer(newCustomer);
+        CustomerService.addCustomer(newCustomer);
 
         return newCustomer;
     }
@@ -177,7 +187,7 @@ public class AuthenticationService {
      * @return true if the email is already in use, false otherwise.
      */
     private boolean isEmailUsed(String email) {
-        if (customerService.findCustomer(email) != null) {
+        if (CustomerService.findCustomer(email) != null) {
             System.out.println("This email is already registered.");
             return true;
         }
@@ -188,6 +198,6 @@ public class AuthenticationService {
      * Handles the logout operation by clearing the order list.
      */
     public void logout() {
-        orderService.clearOrderList();
+        System.out.println("\nYou have successfully logged out.");
     }
 }

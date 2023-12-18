@@ -9,32 +9,32 @@ public abstract class Alcohol {
     /**
      * The unique ID of the alcohol product.
      */
-    protected final int ID;
+    private final int ID;
 
     /**
      * The name of the alcohol product.
      */
-    protected String name;
+    private String name;
 
     /**
      * The producer or manufacturer of the alcohol product.
      */
-    protected String producer;
+    private String producer;
 
     /**
      * The price of the alcohol product.
      */
-    protected double price;
+    private double price;
 
     /**
      * The volume of the alcohol product in liters (L).
      */
-    protected double litres;
+    private double litres;
 
     /**
      * The alcohol content percentage of the alcohol product.
      */
-    protected double alcoholContent;
+    private double alcoholContent;
 
     /**
      * Creates a new instance of the Alcohol class with the specified attributes.

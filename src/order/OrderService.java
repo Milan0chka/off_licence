@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static order.Order.setOrderNumber;
-
 /**
  * The `OrderService` class manages customer orders, including loading, creating, repeating, and saving orders to files.
  */
@@ -19,6 +17,27 @@ public class OrderService {
      * A list that stores customer orders.
      */
     private static final List<Order> customerOrderList = new ArrayList<>();
+    private static OrderService instance;
+
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     */
+
+    private OrderService() {
+    }
+
+    /**
+     * Gets the singleton instance of the OrderService class. If an instance
+     * does not exist, it creates one. Subsequent calls return the existing instance.
+     *
+     * @return The OrderService instance.
+     */
+    public static OrderService getInstance() {
+        if (instance == null) {
+            instance = new OrderService();
+        }
+        return instance;
+    }
 
     /**
      * Loads customer orders from a file and populates the order list.
@@ -28,7 +47,7 @@ public class OrderService {
      */
     public void loadCustomerOrders(int customerID) {
         readCustomerOrdersFromFile(customerID);
-        setOrderNumber(customerOrderList.size() + 1);
+        Order.setOrderNumber(customerOrderList.size() + 1);
     }
 
     private void readCustomerOrdersFromFile(int customerID) {
@@ -77,8 +96,7 @@ public class OrderService {
             int productId = Integer.parseInt(parts[i].trim());
             int quantity = Integer.parseInt(parts[i + 1].trim());
 
-            ProductService productService = new ProductService();
-            order.addProduct(productService.findProduct(productId), quantity);
+            order.addProduct(ProductService.findProduct(productId), quantity);
         }
 
         return order;
@@ -175,6 +193,7 @@ public class OrderService {
         line.append(order.getID()).append(", ");
         line.append(order.getTotal());
 
+        // Iterate through purchased products and append their IDs and quantities to the line.
         for (Map.Entry<Alcohol, Integer> entry : order.getPurchasedProducts().entrySet()) {
             line.append(", ").append(entry.getKey().getID()).append(", ").append(entry.getValue());
         }
@@ -202,8 +221,9 @@ public class OrderService {
      * Clears the list of customer orders.
      */
     public void clearOrderList() {
+        // Clear the list of customer orders and reset the order number.
         customerOrderList.clear();
-        setOrderNumber(1);
+        Order.setOrderNumber(1);
     }
 
 }

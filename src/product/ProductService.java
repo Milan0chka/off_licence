@@ -14,6 +14,27 @@ public class ProductService {
      * A list that stores alcohol products.
      */
     private static final List<Alcohol> productList = new ArrayList<>();
+    private static ProductService instance;
+
+    /**
+     * Private constructor to enforce the Singleton pattern.
+     */
+
+    private ProductService() {
+    }
+
+    /**
+     * Gets the singleton instance of the ProductService class. If an instance
+     * does not exist, it creates one. Subsequent calls return the existing instance.
+     *
+     * @return The ProductService instance.
+     */
+    public static ProductService getInstance() {
+        if (instance == null) {
+            instance = new ProductService();
+        }
+        return instance;
+    }
 
     /**
      * Loads alcohol products from a file and populates the product list.
@@ -66,9 +87,17 @@ public class ProductService {
      * @param productID The ID of the product to find.
      * @return The found Alcohol object, or null if not found.
      */
-    public Alcohol findProduct(int productID) {
+    public static Alcohol findProduct(int productID) {
         for (Alcohol product : productList)
-            if (product.ID == productID)
+            if (product.getID() == productID)
+                return product;
+
+        return null;
+    }
+
+    public static Alcohol findProduct(String name) {
+        for (Alcohol product : productList)
+            if (name.equals(product.getName()))
                 return product;
 
         return null;

@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/OneDrive/Робочий стіл/MTU/year 2/OOP/project_javadoc" />
+    <option name="OUTPUT_DIRECTORY" value="$PROJECT_DIR$/../javodoc1" />
     <option name="OPTION_SCOPE" value="public" />
-    <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="true" />
     <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="false" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_19" default="true" project-jdk-name="19" project-jdk-type="JavaSDK">

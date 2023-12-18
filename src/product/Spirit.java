@@ -24,7 +24,6 @@ public abstract class Spirit extends Alcohol {
     /**
      * Provides information about the specific type of spirits (e.g.,vodka, whiskey) represented by the subclass.
      */
-    @Override
     public abstract void infoAboutAlcoholType();
 
     /**
